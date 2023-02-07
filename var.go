@@ -109,6 +109,7 @@ func AddValueToCaller(f *ast.File, varName, value string) bool {
 					vsVal.Args = append(vsVal.Args, &ast.BasicLit{
 						Kind:  token.STRING,
 						Value: value,
+						ValuePos: token.NoPos + 1,
 					})
 					return true
 				}
@@ -142,6 +143,7 @@ func AddValueToSlice(f *ast.File, varName, value string) bool {
 					vsVal.Elts = append(vsVal.Elts, &ast.BasicLit{
 						Kind:  token.STRING,
 						Value: value,
+						ValuePos: token.NoPos + 1,
 					})
 					return true
 				}
@@ -197,8 +199,8 @@ func AddKVToUnaryStruct(f *ast.File, varName, key, value string) bool {
 // getKVExpr 获取一个*ast.KeyValueExpr
 func getKVExpr(key, value string) *ast.KeyValueExpr {
 	return &ast.KeyValueExpr{
-		Key:   &ast.BasicLit{Kind: token.STRING, Value: key},
-		Value: &ast.BasicLit{Kind: token.STRING, Value: value},
+		Key:   &ast.BasicLit{Kind: token.STRING, Value: key, ValuePos: token.NoPos + 1},
+		Value: &ast.BasicLit{Kind: token.STRING, Value: value, ValuePos: token.NoPos + 1},
 	}
 }
 
@@ -237,11 +239,23 @@ func getVar(name, value string) *ast.GenDecl {
 				Names: []*ast.Ident{ast.NewIdent(name)},
 				Values: []ast.Expr{&ast.BasicLit{
 					Kind:     token.STRING,
-					ValuePos: token.NoPos,
+					ValuePos: token.NoPos + 1,
 					Value:    value,
 				}},
 			},
 		},
+	}
+}
+
+// getAssignVar 获取一个用于生成<str1 := "string"> 格式的 AssignStmt，
+func getAssignVar(name, value string,afterLine token.Pos) *ast.AssignStmt {
+	if name == "" || value == "" {
+		return nil
+	}
+	return &ast.AssignStmt{
+		TokPos: afterLine + 1,
+		Lhs: []ast.Expr{&ast.Ident{Name: name}},
+		Rhs: []ast.Expr{&ast.BasicLit{Value: value}},
 	}
 }
 

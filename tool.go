@@ -47,5 +47,5 @@ func WriteToFile(fset *token.FileSet, f *ast.File, path string) error {
 	if err := format.Node(&buf, fset, f); err != nil {
 		return err
 	}
-	return ioutil.WriteFile(path, buf.Bytes(), 0777)
+	return ioutil.WriteFile(path, buf.Bytes(), 0755)
 }

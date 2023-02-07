@@ -119,3 +119,10 @@ func TestToSlice(t *testing.T) {
 	fst, f := InitEnv("./test_demo/var_add_value_to_slice.go")
 	ast.Print(fst, f)
 }
+
+
+func TestGinRoute(t *testing.T) {
+	// 加载测试文件
+	fst, f := InitEnv("./test_demo/route_demo.go")
+	ast.Print(fst,f)
+}
